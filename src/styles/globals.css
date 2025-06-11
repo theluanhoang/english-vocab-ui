@@ -8,6 +8,7 @@
   --color-primary: #0284C7;     /* Sky 600 - Bold & Professional */
   --color-secondary: #7C3AED;   /* Violet 600 - Rich & Creative */
   --color-accent: #DB2777;      /* Pink 600 - Energetic */
+  --color-yellow-500: #F59E0B;  /* Yellow 500 - Tailwind standard */
   
   /* Logo Gradient Colors */
   --logo-start: #2563EB;        /* Blue 600 */
@@ -15,14 +16,14 @@
   --logo-end: #DB2777;         /* Pink 600 */
   
   /* Background Colors */
-  --background: #F8FAFC;        /* Slate 50 */
+  --background: #101828;        /* Custom background color */
   --foreground: #0F172A;        /* Slate 900 */
   --bg-card: #FFFFFF;
   --bg-form: #FFFFFF;
   --bg-footer: #0F172A;
   
   /* Text Colors */
-  --text-primary: #0F172A;      /* Slate 900 */
+  --text-primary: #F8FAFC;      /* Sáng để nổi bật trên nền tối */
   --text-secondary: #334155;    /* Slate 700 */
   --text-muted: #64748B;        /* Slate 500 */
   
@@ -43,7 +44,7 @@
 }
 
 .dark {
-  --background: #0F172A;        /* Slate 900 */
+  --background: #101828;        /* Custom background color */
   --foreground: #F8FAFC;        /* Slate 50 */
   --bg-card: #1E293B;          /* Slate 800 */
   --bg-form: #1E293B;          /* Slate 800 */
@@ -64,6 +65,9 @@
   body {
     background-color: var(--background);
     color: var(--text-primary);
+  }
+  html, body {
+    overflow-x: hidden;
   }
 }
 
@@ -166,4 +170,34 @@
 
 ::-webkit-scrollbar-thumb:hover {
   background: var(--text-secondary);
+}
+
+.footer-shadow {
+  box-shadow: 0 -8px 32px -8px rgba(16, 24, 40, 0.5);
+}
+
+/* Custom slick slider dots */
+.slick-dots {
+  bottom: 24px !important;
+}
+.slick-dots li {
+  margin: 0 6px;
+}
+.slick-dots li button {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #334155;
+  border: none;
+  transition: background 0.3s, transform 0.3s;
+  opacity: 0.7;
+}
+.slick-dots li.slick-active button {
+  background: var(--color-primary);
+  opacity: 1;
+  transform: scale(1.2);
+  box-shadow: 0 0 0 4px rgba(2,132,199,0.15);
+}
+.slick-dots li button:before {
+  display: none;
 }

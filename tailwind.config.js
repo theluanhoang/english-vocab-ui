@@ -31,7 +31,7 @@ module.exports = {
         error: '#EF4444',
         // Background Colors
         background: {
-          DEFAULT: '#FAFAFA',
+          DEFAULT: '#101828',
           subtle: '#F4F4F5',
           muted: '#E4E4E7'
         },

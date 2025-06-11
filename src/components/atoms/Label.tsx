@@ -1,20 +1,17 @@
+import { cn } from "@/lib/utils";
 import { ReactNode } from "react";
 
-interface Props {
-    children: ReactNode,
-    className?: string;
-    id?: string;
-}
+interface Props extends React.LabelHTMLAttributes<HTMLLabelElement> {}
 
 function Label({
-    children,
     className,
-    id,
+    children,
+    ...props
 }: Readonly<Props>) {
     return (
         <label
-            htmlFor={id}
-            className={className}
+            className={cn(className)}
+            {...props}
         >
             {children}
         </label>
