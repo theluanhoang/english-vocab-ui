@@ -53,7 +53,7 @@ export default function CollectionsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background dark:bg-background">
+    <div className="min-h-screen bg-background">
       <div className="max-w-4xl mx-auto px-4 py-8">
         <div className="text-center md:text-left mb-8 md:mb-12">
           <div className="text-center">
@@ -87,7 +87,7 @@ export default function CollectionsPage() {
                     </span>
                   </div>
                 </div>
-                <span className="text-sm text-text-muted dark:text-gray-400 whitespace-nowrap">{col.collectionVocabularies.length} words</span>
+                <span className="text-sm text-text-secondary dark:text-gray-400 whitespace-nowrap">{col.collectionVocabularies.length} words</span>
               </Link>
             </div>
           ))}

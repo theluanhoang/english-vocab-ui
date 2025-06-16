@@ -18,18 +18,18 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-[calc(100vh-4rem)] flex flex-col">
+    <div className="min-h-[calc(100vh-4rem)] flex flex-col bg-background">
       <div className="container mx-auto px-4 flex-1 w-full">
         {/* Slideshow Section with Overlay */}
         <div className="relative w-full mb-16" style={{minHeight: '400px'}}>
           {/* Overlay cố định */}
           <div className="absolute top-0 left-0 right-0 z-10 flex items-center justify-center h-[400px] md:h-[600px] w-full pointer-events-none">
             <div className="w-full flex flex-col items-center justify-center">
-              <div className="max-w-4xl w-full text-white text-center">
-                <h1 className="text-4xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent pointer-events-auto">
+              <div className="max-w-4xl w-full text-text-primary text-center">
+                <h1 className="text-4xl md:text-6xl font-bold mb-6 text-text-primary text-center pointer-events-auto">
                   Master English Vocabulary
                 </h1>
-                <p className="text-xl md:text-2xl mb-8 text-gray-200 pointer-events-auto">
+                <p className="text-xl md:text-2xl mb-8 text-text-secondary pointer-events-auto">
                   Learn smarter, remember longer with our innovative spaced repetition system.
                   Join thousands of successful learners today!
                 </p>
@@ -90,21 +90,21 @@ export default function Home() {
             <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
               <span className="text-2xl">📚</span>
             </div>
-            <h3 className="text-xl font-semibold mb-2">Rich Content</h3>
+            <h3 className="text-xl font-semibold mb-2 text-text-primary">Rich Content</h3>
             <p className="text-text-secondary">Access thousands of carefully curated vocabulary lists and learning materials</p>
           </div>
           <div className="card text-center p-6 hover:shadow-lg transition-shadow duration-200">
             <div className="w-12 h-12 bg-secondary/10 rounded-full flex items-center justify-center mx-auto mb-4">
               <span className="text-2xl">🎯</span>
             </div>
-            <h3 className="text-xl font-semibold mb-2">Smart Learning</h3>
+            <h3 className="text-xl font-semibold mb-2 text-text-primary">Smart Learning</h3>
             <p className="text-text-secondary">AI-powered learning path that adapts to your progress and learning style</p>
           </div>
           <div className="card text-center p-6 hover:shadow-lg transition-shadow duration-200">
             <div className="w-12 h-12 bg-accent/10 rounded-full flex items-center justify-center mx-auto mb-4">
               <span className="text-2xl">🏆</span>
             </div>
-            <h3 className="text-xl font-semibold mb-2">Track Progress</h3>
+            <h3 className="text-xl font-semibold mb-2 text-text-primary">Track Progress</h3>
             <p className="text-text-secondary">Detailed analytics and progress tracking to monitor your improvement</p>
           </div>
         </div>
@@ -145,21 +145,21 @@ export default function Home() {
             <div className="flex items-center">
               <span className="text-2xl mr-2">👥</span>
               <div>
-                <p className="font-bold">10K+</p>
+                <p className="font-bold text-text-primary">10K+</p>
                 <p className="text-sm text-text-secondary">Active Users</p>
               </div>
             </div>
             <div className="flex items-center">
               <span className="text-2xl mr-2">📖</span>
               <div>
-                <p className="font-bold">50K+</p>
+                <p className="font-bold text-text-primary">50K+</p>
                 <p className="text-sm text-text-secondary">Words Learned</p>
               </div>
             </div>
             <div className="flex items-center">
               <span className="text-2xl mr-2">⭐</span>
               <div>
-                <p className="font-bold">4.9/5</p>
+                <p className="font-bold text-text-primary">4.9/5</p>
                 <p className="text-sm text-text-secondary">User Rating</p>
               </div>
             </div>

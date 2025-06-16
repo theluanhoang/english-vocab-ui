@@ -31,7 +31,7 @@ export default function RootLayout({
                 <div className="absolute -top-[40%] -right-[40%] w-[80%] h-[80%] rounded-full bg-primary/5 blur-3xl" />
                 <div className="absolute -bottom-[40%] -left-[40%] w-[80%] h-[80%] rounded-full bg-secondary/5 blur-3xl" />
               </div>
-              <div className="min-h-screen flex flex-col">
+              <div className="min-h-screen flex flex-col bg-background">
                 <Navbar />
                 <main className="flex-grow container mx-auto px-4 py-8">
                   {children}

@@ -9,7 +9,7 @@ interface FooterLinkProps {
 function FooterLink({ href, children }: FooterLinkProps) {
     return (
         <li>
-            <Link href={href} className="text-sm text-gray-300 hover:text-white transition-colors">
+            <Link href={href} className="text-sm text-text-secondary hover:text-primary transition-colors">
                 {children}
             </Link>
         </li>

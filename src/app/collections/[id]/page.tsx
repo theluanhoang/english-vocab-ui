@@ -30,7 +30,7 @@ export default function CollectionDetailPage() {
           {collection.description && (
             <Text as="p" className="text-text-secondary dark:text-gray-300 mb-2">{collection.description}</Text>
           )}
-          <div className="text-xs text-text-muted dark:text-gray-400">
+          <div className="text-xs text-text-secondary dark:text-gray-400">
             Created at: {new Date(collection.createdAt).toLocaleString()}
           </div>
         </div>

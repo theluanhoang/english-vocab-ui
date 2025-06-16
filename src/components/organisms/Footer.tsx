@@ -6,11 +6,11 @@ import FooterCopyright from '../molecules/FooterCopyright'
 
 function Footer() {
     return (
-        <footer className="bg-bg-footer text-white mt-auto footer-shadow">
+        <footer className="bg-bg-footer text-text-primary mt-auto footer-shadow">
             <div className="container mx-auto px-4">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8 py-8">
                     <FooterSection title="OxMaster">
-                        <Text className="text-sm text-gray-300">
+                        <Text className="text-sm text-text-secondary">
                             Master English vocabulary with our innovative learning platform.
                         </Text>
                     </FooterSection>
@@ -26,8 +26,8 @@ function Footer() {
 
                     <FooterSection title="Contact">
                         <ul className="space-y-2">
-                            <li className="text-sm text-gray-300">Email: support@oxmaster.com</li>
-                            <li className="text-sm text-gray-300">Follow us on social media</li>
+                            <li className="text-sm text-text-secondary">Email: support@oxmaster.com</li>
+                            <li className="text-sm text-text-secondary">Follow us on social media</li>
                         </ul>
                     </FooterSection>
                 </div>

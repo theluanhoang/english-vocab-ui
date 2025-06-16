@@ -42,6 +42,9 @@ module.exports = {
           3: '#F3F4F6'
         },
         // Text Colors
+        'text-primary': 'var(--text-primary)',
+        'text-secondary': 'var(--text-secondary)',
+        'text-muted': 'var(--text-muted)',
         text: {
           primary: '#18181B',
           secondary: '#3F3F46',
