@@ -11,10 +11,13 @@ import { FaGithub } from 'react-icons/fa'
 import { Link } from 'lucide-react'
 import Text from '../atoms/Text'
 import { signIn } from 'next-auth/react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 
 function LoginForm() {
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const callbackUrl = searchParams.get('callbackUrl') || '/'
+
   const form = useForm<LoginFormSchema>({
     resolver: zodResolver(loginFormSchema),
     defaultValues: { email: '', password: '' }
@@ -28,27 +31,28 @@ function LoginForm() {
 
   const submitForm = async (data: LoginFormSchema) => {
     try {
-      console.log('Attempting to sign in with:', { email: data.email });
-      
       const result = await signIn('credentials', {
         email: data.email,
         password: data.password,
         redirect: false,
       })
 
-      console.log('Sign in result:', result);
-
       if (result?.error) {
-        console.error('Authentication error:', result.error);
+        form.setError('root', {
+          type: 'manual',
+          message: result.error
+        });
         return;
       }
 
       if (result?.ok) {
-        console.log('Authentication successful, redirecting...');
-        router.push('/');
+        router.push(callbackUrl);
       }
     } catch (error) {
-      console.error('Login error:', error);
+      form.setError('root', {
+        type: 'manual',
+        message: 'An unexpected error occurred. Please try again.'
+      });
     }
   }
 
@@ -57,14 +61,13 @@ function LoginForm() {
   }
 
   const handleSocialLogin = (provider: string) => {
-    console.log('Attempting social login with:', provider);
-    signIn(provider, { callbackUrl: '/' })
+    signIn(provider, { callbackUrl })
   }
 
   return (
     <div className="min-h-screen bg-background dark:bg-background flex items-center justify-center">
       <div className="card w-full max-w-md p-8">
-        <form onSubmit={handleSubmit(onSubmitForm)} className="space-y-6">
+        <form onSubmit={handleSubmit(onSubmitForm)} className="space-y-6" method="POST">
           <div className="text-center">
             <Heading weight='bold' className="text-2xl mb-2">Welcome Back!</Heading>
             <Text as='p' className="text-text-secondary">Sign in to continue your learning journey</Text>
@@ -104,9 +107,10 @@ function LoginForm() {
               <Label className="block text-sm font-medium mb-2">Email</Label>
               <Input
                 {...register("email")}
-                type="text"
+                type="email"
                 placeholder="Enter your email"
                 className="w-full"
+                autoComplete="email"
               />
               {errors.email && (
                 <p className="mt-1 text-sm text-error">{errors.email.message}</p>
@@ -119,6 +123,7 @@ function LoginForm() {
                 {...register("password")}
                 placeholder="Enter your password"
                 className="w-full"
+                autoComplete="current-password"
               />
               {errors.password && (
                 <Text as='p' className="mt-1 text-sm text-error">{errors.password.message}</Text>
@@ -149,6 +154,12 @@ function LoginForm() {
           >
             {isSubmitting ? 'Signing in...' : 'Sign in'}
           </Button>
+
+          {errors.root && (
+            <Text as='p' className="text-center text-sm text-error mt-2">
+              {errors.root.message}
+            </Text>
+          )}
 
           <Text as='p' className="text-center text-sm text-text-secondary">
             Don't have an account?{' '}

@@ -1,9 +1,20 @@
 import { Vocabulary } from "./vocabulary";
 
-enum CollectionType {
+export enum CollectionType {
     FORM = 'FORM',
     SYNONYMS = 'SYNONYMS',
     MEANINGS = 'MEANINGS',
+}
+
+export interface CreateCollectionDTO {
+  name: string;
+  description?: string;
+}
+
+export interface GetCollectionDTO {
+  collectionId?: string;
+  limit?: number;
+  offset?: number;
 }
 
 export interface Collection {

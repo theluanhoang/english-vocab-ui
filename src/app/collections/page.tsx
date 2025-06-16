@@ -1,11 +1,56 @@
 "use client";
 import Link from "next/link";
-import { mockCollections } from "@/mocks/collections";
 import { FolderOpenDot } from "lucide-react";
 import Heading from "@/components/atoms/Heading";
 import Text from "@/components/atoms/Text";
+import { useEffect, useState } from "react";
+import { collectionService } from "@/app/services/collection.service";
+import { GetCollectionsResponse } from "@/types/collection";
+import { useSessionExpired } from "@/contexts/SessionExpiredContext";
 
 export default function CollectionsPage() {
+  const [collections, setCollections] = useState<GetCollectionsResponse>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const { open: isSessionExpired } = useSessionExpired();
+
+  useEffect(() => {
+    // Don't fetch if session is expired
+    if (isSessionExpired) return;
+
+    const fetchCollections = async () => {
+      try {
+        setIsLoading(true);
+        const data = await collectionService.getAllCollections();
+        setCollections(data);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Failed to fetch collections');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchCollections();
+  }, [isSessionExpired]);
+
+  // Don't render content if session is expired
+  if (isSessionExpired) return null;
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-background dark:bg-background flex items-center justify-center">
+        <Text>Loading collections...</Text>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-background dark:bg-background flex items-center justify-center">
+        <Text className="text-red-500">{error}</Text>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background dark:bg-background">
@@ -22,7 +67,7 @@ export default function CollectionsPage() {
           </div>
         </div>
         <div className="space-y-6 md:space-y-8">
-          {mockCollections.map((col) => (
+          {collections.map((col) => (
             <div
               key={col.id}
               className="rounded-2xl border border-border-subtle dark:border-gray-700 bg-surface-1 dark:bg-gray-800 shadow-lg transition-all hover:shadow-xl hover:shadow-gray-200 dark:hover:shadow-gray-900/70"

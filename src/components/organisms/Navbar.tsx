@@ -2,15 +2,23 @@
 
 import Link from 'next/link';
 import { ThemeToggle } from '../atoms/ThemeToggle'; 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
 import { useSession, signOut } from 'next-auth/react';
-import { UserCircleIcon } from '@heroicons/react/24/outline';
+import Avatar from '../atoms/Avatar';
+import { useRouter } from 'next/navigation';
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
-  const { data: session, status } = useSession();
+  const { data: session, status, update } = useSession();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (status === 'authenticated') {
+      console.log('Session in Navbar:', session);
+    }
+  }, [status, session]);
 
   const handleSignOut = async () => {
     await signOut({ callbackUrl: '/' });
@@ -71,7 +79,7 @@ export default function Navbar() {
                   onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
                   className="flex items-center space-x-2 text-text-secondary hover:text-primary transition-colors"
                 >
-                  <UserCircleIcon className="h-8 w-8" />
+                  <Avatar email={session.user?.email || ''} size={32} />
                   <span className="hidden md:block">{session.user?.name || session.user?.email}</span>
                 </button>
                 {isUserMenuOpen && (
@@ -169,8 +177,11 @@ export default function Navbar() {
               <div className="h-8 w-full bg-background-subtle animate-pulse rounded-lg"></div>
             ) : session ? (
               <>
-                <div className="px-4 py-2 text-text-secondary">
-                  {session.user?.name || session.user?.email}
+                <div className="flex items-center space-x-2 px-4 py-2">
+                  <Avatar email={session.user?.email || ''} size={32} />
+                  <span className="text-text-secondary">
+                    {session.user?.name || session.user?.email}
+                  </span>
                 </div>
                 <Link
                   href="/profile"
@@ -199,7 +210,7 @@ export default function Navbar() {
             ) : (
               <Link 
                 href="/login" 
-                className="block px-4 py-2 rounded-lg bg-primary text-white hover:bg-hover-primary transition-colors text-center"
+                className="block px-4 py-2 text-text-secondary hover:bg-background-subtle transition-colors"
                 onClick={() => setIsOpen(false)}
               >
                 Sign In

@@ -1,16 +1,136 @@
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import GitHub from "next-auth/providers/github";
+import Google from "next-auth/providers/google";
 import { AdapterUser } from "@auth/core/adapters";
+import { JWT } from "next-auth/jwt";
+
+// Override AdapterUser type
+declare module "@auth/core/adapters" {
+  interface AdapterUser {
+    id: string;
+    email: string;
+    name: string;
+  }
+}
+
+// Extend the built-in session types
+declare module "next-auth" {
+  interface Session {
+    user: {
+      id: string;
+      email: string;
+      name: string;
+    };
+    accessToken?: string;
+    refreshToken?: string;
+  }
+
+  interface User {
+    id: string;
+    email: string;
+    name: string;
+    accessToken?: string;
+    refreshToken?: string;
+  }
+}
+
+// Extend the built-in JWT types
+declare module "next-auth/jwt" {
+  interface JWT {
+    id: string;
+    email: string;
+    name: string;
+    accessToken?: string;
+    refreshToken?: string;
+    tokenVersion?: number;
+  }
+}
 
 interface CustomUser {
     id: string;
     email: string;
     name: string;
+    accessToken: string;
+    refreshToken: string;
 }
 
+async function refreshAccessToken(token: JWT) {
+    try {
+        const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+        if (!apiUrl) {
+            throw new Error('API URL is not configured');
+        }
+
+        const response = await fetch(`${apiUrl}/auth/refresh-token`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                refreshToken: token.refreshToken,
+            }),
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.message || 'Failed to refresh token');
+        }
+
+        return {
+            ...token,
+            accessToken: data.accessToken,
+            refreshToken: data.refreshToken,
+            tokenVersion: (token.tokenVersion ?? 0) + 1,
+        };
+    } catch (error) {
+        return {
+            ...token,
+            error: 'RefreshAccessTokenError',
+        };
+    }
+}
+
+async function logout(refreshToken: string) {
+    try {
+        const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+        if (!apiUrl) {
+            throw new Error('API URL is not configured');
+        }
+
+        const response = await fetch(`${apiUrl}/auth/logout`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                refreshToken,
+            }),
+        });
+
+        if (!response.ok) {
+            const data = await response.json();
+            throw new Error(data.message || 'Failed to logout');
+        }
+
+        // Sign out from NextAuth
+        await signOut();
+        
+        return true;
+    } catch (error) {
+        console.error('Error during logout:', error);
+        throw error;
+    }
+}
+
+export { logout };
 export const { handlers, auth, signIn, signOut } = NextAuth({
     providers: [
+        Google({
+            clientId: process.env.AUTH_GOOGLE_ID,
+            clientSecret: process.env.AUTH_GOOGLE_SECRET,
+        }),
         GitHub({
             clientId: process.env.AUTH_GITHUB_ID,
             clientSecret: process.env.AUTH_GITHUB_SECRET,
@@ -35,9 +155,12 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
                 }
 
                 try {
-                    console.log('Making request to:', `${process.env.NEXT_PUBLIC_API_URL}/auth/login`);
+                    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+                    if (!apiUrl) {
+                        throw new Error('API URL is not configured');
+                    }
                     
-                    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, {
+                    const res = await fetch(`${apiUrl}/auth/login`, {
                         method: "POST",
                         headers: {
                             "Content-Type": "application/json",
@@ -46,11 +169,9 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
                             email: credentials.email,
                             password: credentials.password,
                         }),
-                        credentials: 'include', // This is important for cookies
                     });
 
                     const data = await res.json();
-                    console.log('Login response:', data);
 
                     if (!res.ok) {
                         throw new Error(data.message || 'Authentication failed');
@@ -60,16 +181,16 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
                         throw new Error('No access token received');
                     }
 
-                    // Decode the JWT token to get user information
                     const tokenPayload = JSON.parse(atob(data.accessToken.split('.')[1]));
                     
                     return {
                         id: tokenPayload.sub,
                         email: tokenPayload.email,
                         name: tokenPayload.email.split('@')[0],
+                        accessToken: data.accessToken,
+                        refreshToken: data.refreshToken,
                     } as CustomUser;
                 } catch (error) {
-                    console.error("Auth error:", error);
                     throw error;
                 }
             },
@@ -77,46 +198,74 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     ],
     session: {
         strategy: "jwt",
-        maxAge: 30 * 24 * 60 * 60,
+        maxAge: 30 * 24 * 60 * 60, // 30 days
+        updateAge: 24 * 60 * 60, // 24 hours
     },
     callbacks: {
         async jwt({ token, user, account }) {
-            if (account && user) {
-                const customUser = user as CustomUser;
+            if (user) {
                 return {
                     ...token,
-                    id: customUser.id,
-                    email: customUser.email,
-                    name: customUser.name,
+                    id: user.id,
+                    email: user.email,
+                    name: user.name,
+                    accessToken: user.accessToken,
+                    refreshToken: user.refreshToken,
+                    tokenVersion: 0,
                 };
             }
-            return token;
+
+            const tokenExp = token.accessToken ? JSON.parse(atob(token.accessToken.split('.')[1])).exp * 1000 : 0;
+            
+            if (Date.now() < tokenExp) {
+                return token;
+            }
+
+            return refreshAccessToken(token);
         },
         async session({ session, token }) {
-            return {
-                ...session,
-                user: {
-                    id: token.id as string,
-                    email: token.email as string,
-                    name: token.name as string,
-                },
-            };
+            if (token) {
+                session.user.id = token.id;
+                session.user.email = token.email;
+                session.user.name = token.name;
+                session.accessToken = token.accessToken;
+                session.refreshToken = token.refreshToken;
+            }
+            return session;
         },
     },
     pages: {
-        signIn: '/auth/signin',
-        error: '/auth/error',
+        signIn: '/login',
+        error: '/login',
     },
     secret: process.env.NEXTAUTH_SECRET,
     debug: process.env.NODE_ENV === 'development',
     cookies: {
         sessionToken: {
-            name: `__Secure-next-auth.session-token`,
+            name: `next-auth.session-token`,
             options: {
                 httpOnly: true,
                 sameSite: 'lax',
                 path: '/',
-                secure: true
+                secure: process.env.NODE_ENV === 'production',
+                maxAge: 30 * 24 * 60 * 60 // 30 days
+            }
+        },
+        callbackUrl: {
+            name: `next-auth.callback-url`,
+            options: {
+                sameSite: 'lax',
+                path: '/',
+                secure: process.env.NODE_ENV === 'production'
+            }
+        },
+        csrfToken: {
+            name: `next-auth.csrf-token`,
+            options: {
+                httpOnly: true,
+                sameSite: 'lax',
+                path: '/',
+                secure: process.env.NODE_ENV === 'production'
             }
         }
     }
