@@ -2,8 +2,8 @@
 
 import { useState } from 'react';
 import { Send, Volume2, BookOpen, Sparkles, ChevronDown, ChevronUp } from 'lucide-react';
-import { WordForm, WordFormsResponse } from '@/types/word';
 import { mockWordFormsResponse } from '@/mocks/wordForms';
+import { Vocabulary } from '@/types';
 
 export function getTagColor(partOfSpeech: string) {
   switch (partOfSpeech.toLowerCase()) {
@@ -24,7 +24,7 @@ export function getTagColor(partOfSpeech: string) {
 
 export default function WordForms() {
   const [word, setWord] = useState('');
-  const [wordForms, setWordForms] = useState<WordForm[]>([]);
+  const [wordForms, setWordForms] = useState<Vocabulary[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [openIndexes, setOpenIndexes] = useState<number[]>([]);
 
@@ -34,7 +34,6 @@ export default function WordForms() {
 
     setIsLoading(true);
     try {
-      // Simulate API call delay
       await new Promise(resolve => setTimeout(resolve, 1000));
       setWordForms(mockWordFormsResponse.words);
       setOpenIndexes([]);
@@ -57,14 +56,14 @@ export default function WordForms() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="max-w-4xl mx-auto px-4 py-8">
+    <div className="min-h-screen bg-background dark:bg-background-dark">
+      <div className="max-w-4xl mx-auto px-4 py-8 bg-background dark:bg-background-dark">
         <div className="text-center mb-8 md:mb-12">
-            <div className="inline-block p-3 bg-primary/10 dark:bg-primary/20 rounded-full">
-              <BookOpen className="w-8 h-8 text-primary dark:text-primary-light" />
+            <div className="inline-block p-3 bg-background-icon-light dark:bg-background-icon-dark rounded-full">
+              <BookOpen className="w-8 h-8 text-warning-500 dark:text-primary-light" />
             </div>
-            <h1 className="text-4xl font-bold text-text-primary dark:text-white mb-3">Word Forms Analyzer</h1>
-            <p className="text-text-secondary dark:text-gray-300 max-w-2xl mx-auto">
+            <h1 className="text-4xl font-bold text-content-primary-light dark:text-content-primary-dark mb-3">Word Forms Analyzer</h1>
+            <p className="text-content-secondary-light dark:text-content-secondary-dark max-w-2xl mx-auto">
               Discover the different forms and meanings of English words. Enter a word to explore its variations, definitions, and usage examples.
             </p>
         </div>
@@ -77,13 +76,13 @@ export default function WordForms() {
                 value={word}
                 onChange={(e) => setWord(e.target.value)}
                 placeholder="Enter a word (e.g., certify)"
-                className="w-full px-5 h-14 sm:h-[56px] rounded-xl border border-border-subtle dark:border-gray-700 bg-surface-1 dark:bg-gray-800 text-text-primary dark:text-white placeholder-text-muted dark:placeholder-gray-500 focus:ring-2 focus:ring-primary dark:focus:ring-primary-light focus:border-transparent outline-none transition-all"
+                className="w-full px-5 h-14 sm:h-[56px] rounded-xl border border-border-light dark:border-border-dark bg-background-input-light dark:bg-background-input-dark text-content-primary-light dark:text-content-primary-dark placeholder-content-tertiary-light dark:placeholder-content-tertiary-dark focus:ring-2 focus:ring-warning-500 focus:border-transparent outline-none transition-all"
               />
             </div>
             <button
               type="submit"
               disabled={isLoading}
-              className="px-6 h-14 sm:h-[56px] bg-warning cursor-pointer hover:bg-yellow-400 dark:bg-yellow-400 dark:hover:bg-yellow-300 text-gray-900 font-semibold rounded-xl border-2 border-yellow-300 dark:border-yellow-200 focus:ring-2 focus:ring-warning focus:ring-offset-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 shadow-lg shadow-yellow-200/40 dark:shadow-yellow-200/40 hover:shadow-xl hover:shadow-yellow-300/60 dark:hover:shadow-yellow-100/60 transform hover:-translate-y-0.5 flex-shrink-0"
+              className="cursor-pointer px-6 h-14 sm:h-[56px] bg-yellow-500 hover:bg-yellow-400 dark:bg-yellow-500 dark:hover:bg-yellow-400 text-gray-900 font-semibold rounded-xl border-none focus:ring-2 focus:ring-yellow-400/50 focus:ring-offset-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 shadow-lg shadow-yellow-400/20 hover:shadow-xl hover:shadow-yellow-400/30 transform hover:-translate-y-0.5 flex-shrink-0"
             >
               <Send size={20} />
               {isLoading ? 'Analyzing...' : 'Analyze'}
@@ -98,7 +97,7 @@ export default function WordForms() {
               return (
                 <div
                   key={form.id}
-                  className={`rounded-2xl border border-border-subtle dark:border-gray-700 bg-surface-1 dark:bg-gray-800 shadow-lg transition-all ${isOpen ? 'shadow-xl ring-2 ring-warning/30 dark:ring-yellow-300/30' : 'hover:shadow-xl hover:shadow-gray-200 dark:hover:shadow-gray-900/70'}`}
+                  className={`rounded-2xl border border-gray-200 dark:border-gray-700 bg-background-card-light dark:bg-background-card-dark shadow-sm transition-all ${isOpen ? 'shadow-md ring-2 ring-warning-500/30 dark:ring-warning-500/30' : 'hover:shadow-md'}`}
                 >
                   <button
                     className="w-full flex flex-col md:flex-row items-start md:items-center justify-between px-4 md:px-8 py-4 md:py-6 focus:outline-none group gap-4"
@@ -106,11 +105,11 @@ export default function WordForms() {
                     aria-expanded={isOpen}
                   >
                     <div className="flex items-center gap-3 md:gap-4 text-left w-full md:w-auto">
-                      <div className="p-2 bg-primary/10 dark:bg-primary/20 rounded-lg">
-                        <Sparkles className="w-5 h-5 text-primary dark:text-primary-light" />
+                      <div className="p-2 bg-background-icon-light dark:bg-background-icon-dark rounded-lg">
+                        <Sparkles className="w-5 h-5 text-warning-500 dark:text-primary-light" />
                       </div>
                       <div>
-                        <h3 className="text-xl md:text-2xl font-bold text-text-primary dark:text-white">{form.word}</h3>
+                        <h3 className="text-xl md:text-2xl font-bold text-content-primary-light dark:text-content-primary-dark">{form.word}</h3>
                         <span className={`inline-block px-3 py-1 text-sm font-semibold rounded-full mt-1 shadow-sm border border-transparent ${getTagColor(form.partOfSpeech)}`}>
                           {form.partOfSpeech}
                         </span>
@@ -120,16 +119,16 @@ export default function WordForms() {
                       <button
                         type="button"
                         onClick={e => { e.stopPropagation(); playAudio(form.audio); }}
-                        className="p-3 text-text-muted hover:text-primary dark:text-gray-400 dark:hover:text-primary-light transition-colors bg-surface-2 dark:bg-gray-700 rounded-xl hover:bg-surface-3 dark:hover:bg-gray-600"
+                        className="cursor-pointer p-3 text-content-tertiary-light hover:text-warning-600 dark:text-content-tertiary-dark dark:hover:text-warning-400 transition-all bg-background-icon-light hover:bg-warning-500/10 dark:bg-background-icon-dark dark:hover:bg-warning-500/20 rounded-xl hover:scale-105 dark:hover:scale-105 hover:shadow-md hover:shadow-warning-500/20 dark:hover:shadow-lg dark:hover:shadow-warning-400/30 dark:hover:border dark:hover:border-warning-400/30"
                         title="Play pronunciation"
                         tabIndex={-1}
                       >
                         <Volume2 size={20} />
                       </button>
                       {isOpen ? (
-                        <ChevronUp className="w-6 h-6 text-warning dark:text-yellow-300 transition-transform" />
+                        <ChevronUp className="w-6 h-6 text-warning-500 dark:text-warning-400" />
                       ) : (
-                        <ChevronDown className="w-6 h-6 text-warning dark:text-yellow-300 transition-transform" />
+                        <ChevronDown className="w-6 h-6 text-warning-500 dark:text-warning-400" />
                       )}
                     </div>
                   </button>
@@ -138,28 +137,28 @@ export default function WordForms() {
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
                         <div className="space-y-3 md:space-y-4">
                           <div>
-                            <h4 className="text-sm font-medium text-text-muted dark:text-gray-400 mb-2">Pronunciation:</h4>
-                            <p className="text-text-primary dark:text-white font-mono bg-surface-2 dark:bg-gray-700 px-3 py-2 rounded-lg">
+                            <h4 className="text-sm font-medium text-content-secondary-light dark:text-content-secondary-dark mb-2">Pronunciation:</h4>
+                            <p className="text-content-primary-light dark:text-content-primary-dark font-mono bg-background-icon-light dark:bg-background-icon-dark px-3 py-2 rounded-lg border border-border-light dark:border-border-dark">
                               {form.pronunciation}
                             </p>
                           </div>
                           <div>
-                            <h4 className="text-sm font-medium text-text-muted dark:text-gray-400 mb-2">Definition:</h4>
-                            <p className="text-text-primary dark:text-white bg-surface-2 dark:bg-gray-700 px-3 py-2 rounded-lg">
+                            <h4 className="text-sm font-medium text-content-secondary-light dark:text-content-secondary-dark mb-2">Definition:</h4>
+                            <p className="text-content-primary-light dark:text-content-primary-dark bg-background-icon-light dark:bg-background-icon-dark px-3 py-2 rounded-lg border border-border-light dark:border-border-dark">
                               {form.definition}
                             </p>
                           </div>
                         </div>
                         <div className="space-y-3 md:space-y-4">
                           <div>
-                            <h4 className="text-sm font-medium text-text-muted dark:text-gray-400 mb-2">Meaning:</h4>
-                            <p className="text-text-primary dark:text-white bg-surface-2 dark:bg-gray-700 px-3 py-2 rounded-lg">
-                              {form.meaning}
+                            <h4 className="text-sm font-medium text-content-secondary-light dark:text-content-secondary-dark mb-2">Meaning:</h4>
+                            <p className="text-content-primary-light dark:text-content-primary-dark bg-background-icon-light dark:bg-background-icon-dark px-3 py-2 rounded-lg border border-border-light dark:border-border-dark">
+                              {form.definition}
                             </p>
                           </div>
                           <div>
-                            <h4 className="text-sm font-medium text-text-muted dark:text-gray-400 mb-2">Example:</h4>
-                            <p className="text-text-primary dark:text-white bg-surface-2 dark:bg-gray-700 px-3 py-2 rounded-lg italic">
+                            <h4 className="text-sm font-medium text-content-secondary-light dark:text-content-secondary-dark mb-2">Example:</h4>
+                            <p className="text-content-primary-light dark:text-content-primary-dark bg-background-icon-light dark:bg-background-icon-dark px-3 py-2 rounded-lg border border-border-light dark:border-border-dark italic">
                               "{form.exampleSentence}"
                             </p>
                           </div>
@@ -175,7 +174,7 @@ export default function WordForms() {
 
         {isLoading && (
           <div className="text-center py-12">
-            <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-warning dark:border-yellow-400 border-t-transparent"></div>
+            <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-warning-500 dark:border-warning-400 border-t-transparent"></div>
           </div>
         )}
       </div>

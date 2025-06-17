@@ -25,15 +25,55 @@ module.exports = {
           light: '#FB7185',
           dark: '#E11D48'
         },
+        warning: {
+          DEFAULT: '#FACC15',
+          400: '#FACC15',
+          500: '#EAB308',
+          600: '#CA8A04',
+          hover: {
+            light: '#FEF9C3',  // yellow-100
+            dark: '#422006'    // yellow-950 with opacity
+          }
+        },
         // Semantic Colors
         success: '#10B981',
-        warning: '#F59E0B',
         error: '#EF4444',
         // Background Colors
         background: {
-          DEFAULT: '#101828',
-          subtle: '#F4F4F5',
-          muted: '#E4E4E7'
+          DEFAULT: '#FFFFFF',
+          dark: '#101828',
+          card: {
+            light: '#FFFFFF',
+            dark: '#1E293B'
+          },
+          input: {
+            light: '#FFFFFF',
+            dark: '#1E293B'
+          },
+          icon: {
+            light: '#F8FAFC',  // slate-50
+            dark: '#1E293B'    // slate-800
+          }
+        },
+        // Text Colors
+        content: {
+          primary: {
+            light: '#111827',    // gray-900
+            dark: '#F9FAFB'      // gray-50
+          },
+          secondary: {
+            light: '#374151',    // gray-700
+            dark: '#E5E7EB'      // gray-200
+          },
+          tertiary: {
+            light: '#6B7280',    // gray-500
+            dark: '#9CA3AF'      // gray-400
+          }
+        },
+        // Border Colors
+        border: {
+          light: '#E2E8F0',     // slate-200
+          dark: '#334155'        // slate-700
         },
         // Surface Colors
         surface: {
@@ -41,7 +81,6 @@ module.exports = {
           2: '#F9FAFB',
           3: '#F3F4F6'
         },
-        // Text Colors
         'text-primary': 'var(--text-primary)',
         'text-secondary': 'var(--text-secondary)',
         'text-muted': 'var(--text-muted)',
@@ -51,12 +90,6 @@ module.exports = {
           muted: '#71717A',
           inverted: '#FFFFFF'
         },
-        // Border Colors
-        border: {
-          subtle: '#E4E4E7',
-          muted: '#D4D4D8',
-          strong: '#A1A1AA'
-        }
       },
       boxShadow: {
         sm: '0 1px 2px rgba(24, 24, 27, 0.05)',
