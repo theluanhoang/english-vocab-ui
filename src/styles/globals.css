@@ -201,3 +201,7 @@
 .slick-dots li button:before {
   display: none;
 }
+
+input[type="range"] {
+  appearance: auto;
+}

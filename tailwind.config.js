@@ -55,6 +55,13 @@ module.exports = {
             dark: '#1E293B'    // slate-800
           }
         },
+        // FLATTENED SLIDER COLORS
+        'background-slider-light': '#F1F5F9',   // slate-100
+        'background-slider-dark': '#334155',    // slate-700
+        'background-slider-track-light': '#CBD5E1',  // slate-300
+        'background-slider-track-dark': '#475569',    // slate-600
+        'background-slider-thumb-light': '#EAB308',   // warning-500
+        'background-slider-thumb-dark': '#FACC15',    // warning-400
         // Text Colors
         content: {
           primary: {

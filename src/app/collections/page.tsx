@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { collectionService } from "@/app/services/collection.service";
 import { GetCollectionsResponse } from "@/types/collection";
 import { useSessionExpired } from "@/contexts/SessionExpiredContext";
+import IntroductionSection from "@/components/molecules/IntroductionSection";
 
 export default function CollectionsPage() {
   const [collections, setCollections] = useState<GetCollectionsResponse>([]);
@@ -15,7 +16,6 @@ export default function CollectionsPage() {
   const { open: isSessionExpired } = useSessionExpired();
 
   useEffect(() => {
-    // Don't fetch if session is expired
     if (isSessionExpired) return;
 
     const fetchCollections = async () => {
@@ -33,7 +33,6 @@ export default function CollectionsPage() {
     fetchCollections();
   }, [isSessionExpired]);
 
-  // Don't render content if session is expired
   if (isSessionExpired) return null;
 
   if (isLoading) {
@@ -55,17 +54,11 @@ export default function CollectionsPage() {
   return (
     <div className="min-h-screen bg-background">
       <div className="max-w-4xl mx-auto px-4 py-8">
-        <div className="text-center md:text-left mb-8 md:mb-12">
-          <div className="text-center">
-            <div className="inline-block p-3 bg-secondary/10 dark:bg-secondary/20 rounded-full">
-              <FolderOpenDot className="w-8 h-8 text-secondary dark:text-secondary-light" />
-            </div>
-            <Heading as="h1" className="text-4xl font-bold text-text-primary dark:text-white mb-3">My Vocabulary Collections</Heading>
-            <Text as="p" className="text-text-secondary dark:text-gray-300 max-w-2xl mx-auto">
-              Review and manage your analyzed vocabulary collections. Click a collection to view its words.
-            </Text>
-          </div>
-        </div>
+        <IntroductionSection 
+          title={'My Vocabulary Collections'} 
+          description={'Review and manage your analyzed vocabulary collections. Click a collection to view its words.'} 
+          icon={FolderOpenDot}
+        />
         <div className="space-y-6 md:space-y-8">
           {collections.map((col) => (
             <div
