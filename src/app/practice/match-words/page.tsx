@@ -165,30 +165,36 @@ export default function MatchWordsPage() {
             selectedMeaning: null
           };
         } else {
-          // Sai - hiển thị feedback và reset sau 1.5 giây
+          // Sai - hiển thị feedback và tự động reset sau 1 giây
+          const wrongWordId = prev.selectedWord!.id;
+          const wrongMeaningId = meaning.id;
+          
           const newWords = prev.words.map(w => ({
             ...w,
-            isWrong: w.id === prev.selectedWord!.id
+            isWrong: w.id === wrongWordId
           }));
           const newMeanings = prev.meanings.map(m => ({
             ...m,
-            isWrong: m.id === meaning.id
+            isWrong: m.id === wrongMeaningId
           }));
 
           setTimeout(() => {
             setGameState(current => ({
               ...current,
+              words: current.words.map(w => w.id === wrongWordId ? { ...w, isWrong: false } : w),
+              meanings: current.meanings.map(m => m.id === wrongMeaningId ? { ...m, isWrong: false } : m),
               selectedWord: null,
               selectedMeaning: null,
-              wrongAttempts: current.wrongAttempts + 1
             }));
-          }, 1500);
+          }, 1000);
 
           return {
             ...newState,
             words: newWords,
             meanings: newMeanings,
-            wrongAttempts: prev.wrongAttempts + 1
+            wrongAttempts: prev.wrongAttempts + 1,
+            selectedWord: null, // Bỏ chọn ngay lập tức
+            selectedMeaning: null
           };
         }
       }
@@ -224,15 +230,15 @@ export default function MatchWordsPage() {
 
   const getCardStyle = (item: WordPair, isSelected: boolean) => {
     if (item.isMatched) {
-      return 'border-green-400 shadow-lg transform scale-105 transition-all duration-300';
+      return 'bg-game-matched-bg border-game-matched-border shadow-lg animate-correct-pop opacity-60 cursor-default';
     }
     
     if (item.isWrong) {
-      return 'border-red-400 shadow-lg animate-pulse transition-all duration-300';
+      return 'bg-game-wrong-bg border-game-wrong-border shadow-lg animate-shake';
     }
     
     if (isSelected) {
-      return 'border-blue-400 shadow-lg transform scale-105 transition-all duration-300';
+      return 'bg-game-selected-bg border-game-selected-border shadow-lg transform scale-105 transition-all duration-300';
     }
     
     return 'bg-bg-card border-border-light hover:border-game-selected-border hover:bg-game-selected-bg hover:shadow-md transition-all duration-200';
