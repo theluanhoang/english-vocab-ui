@@ -64,15 +64,25 @@ export default function FillBlanksPage() {
         setCollectionName(collection.name);
         
         // Tạo câu hỏi từ collection vocabularies
-        const vocabularies = collection.collectionVocabularies.map((cv: any) => cv.vocabulary);
-        const questions: FillBlankQuestion[] = vocabularies.map((vocab: any, index: number) => {
-          // Tạo câu mẫu với từ cần điền
-          const sentence = `The word "${vocab.word}" means "${vocab.meaning}".`;
-          const blankSentence = sentence.replace(vocab.word, '_____');
+        const vocabularies = collection.collectionVocabularies
+          .map((cv: any) => cv.vocabulary)
+          .filter((vocab: any) => vocab.exampleSentence); // Lọc những từ có ví dụ
+
+        // Nếu không có từ nào có ví dụ, tạo câu hỏi từ tất cả từ vựng
+        const vocabulariesToUse = vocabularies.length > 0 
+          ? vocabularies 
+          : collection.collectionVocabularies.map((cv: any) => cv.vocabulary);
+
+        const questions: FillBlankQuestion[] = vocabulariesToUse.map((vocab: any, index: number) => {
+          // Dùng câu ví dụ làm câu hỏi (nếu có)
+          const sentence = vocab.exampleSentence || `The word "${vocab.word}" means "${vocab.meaning}".`;
+          // Thay thế từ trong câu ví dụ bằng "_____" (không phân biệt hoa thường)
+          const blankSentence = sentence.replace(new RegExp(vocab.word, 'gi'), '_____');
           
-          // Tạo các lựa chọn (bao gồm từ đúng và 3 từ khác)
-          const otherWords = vocabularies
-            .filter((v: any, i: number) => i !== index)
+          // Tạo các lựa chọn (bao gồm từ đúng và 3 từ khác ngẫu nhiên)
+          const otherWords = vocabulariesToUse
+            .filter((v: any) => v.word !== vocab.word) // Lọc ra các từ khác
+            .sort(() => 0.5 - Math.random()) // Xáo trộn để lấy ngẫu nhiên
             .slice(0, 3)
             .map((v: any) => v.word);
           
@@ -83,7 +93,9 @@ export default function FillBlanksPage() {
             sentence: blankSentence,
             correctWord: vocab.word,
             options,
-            explanation: `"${vocab.word}" có nghĩa là "${vocab.meaning}"`
+            explanation: vocab.exampleSentence 
+              ? `"${vocab.word}" có nghĩa là "${vocab.meaning}". Ví dụ: "${vocab.exampleSentence}"`
+              : `"${vocab.word}" có nghĩa là "${vocab.meaning}"`
           };
         });
 
@@ -164,6 +176,38 @@ export default function FillBlanksPage() {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <Text>Đang tải dữ liệu...</Text>
+      </div>
+    );
+  }
+
+  // Kiểm tra xem có câu hỏi nào không
+  if (gameState.questions.length === 0) {
+    return (
+      <div className="min-h-screen bg-background">
+        <div className="max-w-4xl mx-auto px-4 py-8">
+          <div className="mb-6">
+            <Button
+              variant="outline"
+              onClick={() => router.back()}
+              className="mb-4"
+            >
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Quay lại
+            </Button>
+          </div>
+          <div className="card text-center max-w-md mx-auto">
+            <XCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
+            <Heading as="h2" className="text-2xl font-bold mb-2 text-text-primary">
+              Không có dữ liệu
+            </Heading>
+            <Text className="text-text-secondary mb-4">
+              Bộ sưu tập này không có từ vựng nào để luyện tập.
+            </Text>
+            <Button onClick={() => router.back()}>
+              Quay lại
+            </Button>
+          </div>
+        </div>
       </div>
     );
   }
@@ -255,7 +299,7 @@ export default function FillBlanksPage() {
             </Button>
           </div>
           
-          <div className="bg-gray-50 p-6 rounded-lg mb-6">
+          <div className="bg-subtle-bg border border-subtle-border p-6 rounded-lg mb-6">
             <Text className="text-xl text-text-primary leading-relaxed">
               {currentQuestion.sentence}
             </Text>
@@ -271,13 +315,13 @@ export default function FillBlanksPage() {
                 className={`p-4 rounded-lg border-2 transition-all duration-200 text-left ${
                   gameState.isAnswered
                     ? option === currentQuestion.correctWord
-                      ? 'border-green-500 bg-green-50'
-                      : option === gameState.selectedAnswer && option !== currentQuestion.correctWord
-                      ? 'border-red-500 bg-red-50'
-                      : 'border-gray-200 bg-gray-50'
+                      ? 'bg-game-matched-bg border-game-matched-border text-text-primary font-bold animate-correct-pop'
+                      : option === gameState.selectedAnswer
+                      ? 'bg-game-wrong-bg border-game-wrong-border text-text-primary animate-shake'
+                      : 'border-subtle-border opacity-60 cursor-default'
                     : gameState.selectedAnswer === option
-                    ? 'border-primary bg-primary/5'
-                    : 'border-gray-200 hover:border-primary/30 hover:bg-primary/5'
+                    ? 'bg-game-selected-bg border-game-selected-border'
+                    : 'border-subtle-border hover:bg-game-selected-bg hover:border-game-selected-border'
                 }`}
               >
                 <div className="flex items-center justify-between">
@@ -297,17 +341,22 @@ export default function FillBlanksPage() {
 
           {/* Feedback */}
           {gameState.isAnswered && (
-            <div className={`mt-6 p-4 rounded-lg ${
-              gameState.isCorrect ? 'bg-green-50 border border-green-200' : 'bg-red-50 border border-red-200'
+            <div className={`mt-6 p-4 rounded-lg animate-fade-in animate-scale-in ${
+              gameState.isCorrect ? 'bg-game-matched-bg border-game-matched-border' : 'bg-game-wrong-bg border-game-wrong-border'
             }`}>
-              <Text className={`font-semibold mb-2 ${
-                gameState.isCorrect ? 'text-green-700' : 'text-red-700'
+              <Text className={`font-bold text-lg mb-2 ${
+                gameState.isCorrect ? 'text-green-800 dark:text-green-200' : 'text-red-800 dark:text-red-200'
               }`}>
-                {gameState.isCorrect ? 'Chính xác!' : 'Không đúng!'}
+                {gameState.isCorrect ? 'Chính xác! 🎉' : 'Không đúng!'}
               </Text>
-              <Text className="text-text-secondary">
-                {currentQuestion.explanation}
-              </Text>
+              <div className="border-t border-subtle-border pt-2 mt-2">
+                <Text className={`${
+                  gameState.isCorrect ? 'text-green-700 dark:text-green-300' : 'text-red-700 dark:text-red-300'
+                }`}>
+                  <p className="font-semibold">Giải thích:</p>
+                  {currentQuestion.explanation}
+                </Text>
+              </div>
             </div>
           )}
         </div>
@@ -330,7 +379,7 @@ export default function FillBlanksPage() {
         </div>
 
         {/* Instructions */}
-        <div className="mt-8 card bg-blue-50 border-blue-200">
+        <div className="mt-8 card bg-info-bg border-info-border">
           <Heading as="h4" className="text-lg font-semibold mb-2 text-text-primary">
             Hướng dẫn chơi:
           </Heading>
