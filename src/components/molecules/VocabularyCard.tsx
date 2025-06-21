@@ -2,7 +2,7 @@ import React from 'react'
 import Heading from '../atoms/Heading'
 import AudioButton from './AudioButton'
 import { Vocabulary } from '@/types';
-import { getTagColor } from '../organisms/WordForms';
+import { getTagColor } from '@/lib/utils';
 
 type VocabularyCardProps = {
     vocabulary: Vocabulary;

@@ -2,12 +2,11 @@ import { Collection, CreateCollectionDTO, GetCollectionDTO, GetCollectionsRespon
 import { getHeaders } from "@/lib/utils";
 import http from "@/lib/fetchWithAuth";
 
-const apiUrl = process.env.NEXT_PUBLIC_API_URL || '';
 
 export const collectionService = {
   async createCollection(data: CreateCollectionDTO): Promise<Collection> {
     try {
-      const response = await http(`${apiUrl}/collections`, {
+      const response = await http(`/collections`, {
         method: 'POST',
         headers: await getHeaders(),
         body: JSON.stringify(data),
@@ -40,7 +39,7 @@ export const collectionService = {
       }
 
       const response = await http(
-        `${apiUrl}/collections?${queryParams.toString()}`,
+        `/collections?${queryParams.toString()}`,
         {
           method: 'GET',
           headers: await getHeaders(),
