@@ -9,13 +9,14 @@ import { Button } from '../atoms/Button';
 import Input from '../atoms/Input';
 import VocabularyCard from '../molecules/VocabularyCard';
 import { vocabularyService } from '@/app/services/vocabulary.service';
+import { useVolume } from "@/hooks/useVolume";
 
 export default function WordForms() {
   const [word, setWord] = useState('');
   const [wordForms, setWordForms] = useState<Vocabulary[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [openIndexes, setOpenIndexes] = useState<number[]>([]);
-  const [volumes, setVolumes] = useState<{ [id: string]: number }>({});
+  const { volumes, setVolumes, handleVolumeChange } = useVolume();
   const [error, setError] = useState<string | null>(null);
   
   const handleSubmit = async (e: React.FormEvent) => {
@@ -27,11 +28,8 @@ export default function WordForms() {
       const data = await vocabularyService.analyzeWord(word);
       setWordForms(data.words);
       setOpenIndexes([]);
-      const newVolumes: { [id: string]: number } = {};
-      mockWordFormsResponse.words.forEach((word: Vocabulary) => {
-        newVolumes[word.id] = 1;
-      });
-      setVolumes(newVolumes);
+      const ids = data.words.map((word: Vocabulary) => word.id);
+      setVolumes(Object.fromEntries(ids.map((id: string) => [id, 1])));
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to analyze word');
       console.error('Error fetching word forms:', error);
@@ -44,14 +42,6 @@ export default function WordForms() {
     setOpenIndexes((prev) =>
       prev.includes(idx) ? prev.filter(i => i !== idx) : [...prev, idx]
     );
-  };
-
-  const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>, id: string) => {
-    const newVolume = parseFloat(e.target.value);
-    setVolumes(prev => ({
-      ...prev,
-      [id]: newVolume
-    }));
   };
 
   return (
