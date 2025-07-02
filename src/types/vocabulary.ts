@@ -7,6 +7,8 @@ export interface Vocabulary {
     exampleSentence: string;
     audio: string;
     pronunciation: string;
+    translatedExample: string;
+    meaning: string;
 }
 
 export interface WordFormsResponse {

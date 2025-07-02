@@ -5,7 +5,7 @@ import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import Heading from "@/components/atoms/Heading";
 import Text from "@/components/atoms/Text";
-import VocabularyCard from "@/components/molecules/VocabularyCard";
+import VocabularyCard from "@/components/molecules/DetailedVocabularySection";
 
 export default function CollectionDetailPage() {
   const params = useParams();
@@ -34,11 +34,11 @@ export default function CollectionDetailPage() {
             Created at: {new Date(collection.createdAt).toLocaleString()}
           </div>
         </div>
-        <div className="space-y-4 md:space-y-6">
+        {/* <div className="space-y-4 md:space-y-6">
           {collection.collectionVocabularies.map((item) => (
             <VocabularyCard key={item.vocabulary.id} vocabulary={item.vocabulary} />
           ))}
-        </div>
+        </div> */}
       </div>
     </div>
   );

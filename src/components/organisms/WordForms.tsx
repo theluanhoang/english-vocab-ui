@@ -7,7 +7,7 @@ import { Vocabulary } from '@/types';
 import IntroductionSection from '../molecules/IntroductionSection';
 import { Button } from '../atoms/Button';
 import Input from '../atoms/Input';
-import DetailedVocabulary from '../molecules/DetailedVocabulary';
+import VocabularyCard from '../molecules/VocabularyCard';
 import { vocabularyService } from '@/app/services/vocabulary.service';
 
 export default function WordForms() {
@@ -90,9 +90,9 @@ export default function WordForms() {
             {wordForms.map((form, idx) => {
               const isOpen = openIndexes.includes(idx);
               return (
-                <DetailedVocabulary
+                <VocabularyCard
                   key={form.id}
-                  form={form}
+                  vocabulary={form}
                   isOpen={isOpen}
                   volumes={volumes}
                   toggleAccordion={toggleAccordion}
