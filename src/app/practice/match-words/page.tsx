@@ -9,27 +9,8 @@ import { Button } from '@/components/atoms/Button';
 import Text from '@/components/atoms/Text';
 import Heading from '@/components/atoms/Heading';
 import IntroductionSection from '@/components/molecules/IntroductionSection';
+import { WordPair, WordPairGameState } from '@/types/practice';
 
-interface WordPair {
-  id: string;
-  word: string;
-  meaning: string;
-  isMatched: boolean;
-  isSelected: boolean;
-  isWrong: boolean;
-}
-
-interface GameState {
-  words: WordPair[];
-  meanings: WordPair[];
-  selectedWord: WordPair | null;
-  selectedMeaning: WordPair | null;
-  matchedPairs: string[];
-  score: number;
-  totalPairs: number;
-  isGameComplete: boolean;
-  wrongAttempts: number;
-}
 
 export default function MatchWordsPage() {
   const searchParams = useSearchParams();
@@ -37,7 +18,7 @@ export default function MatchWordsPage() {
   const collectionId = searchParams.get('collectionId');
   const { open: isSessionExpired } = useSessionExpired();
   
-  const [gameState, setGameState] = useState<GameState>({
+  const [gameState, setGameState] = useState<WordPairGameState>({
     words: [],
     meanings: [],
     selectedWord: null,
@@ -105,15 +86,12 @@ export default function MatchWordsPage() {
 
     fetchCollectionData();
   }, [collectionId, isSessionExpired]);
-
+  const resetWrongStates = (items: WordPair[]) => 
+        items.map(item => ({ ...item, isWrong: false }));
   const handleWordClick = (word: WordPair) => {
     if (word.isMatched) return;
 
-    setGameState(prev => {
-      // Reset wrong states
-      const resetWrongStates = (items: WordPair[]) => 
-        items.map(item => ({ ...item, isWrong: false }));
-
+    setGameState(prev => {     
       return {
         ...prev,
         words: resetWrongStates(prev.words),
@@ -128,10 +106,6 @@ export default function MatchWordsPage() {
     if (meaning.isMatched) return;
 
     setGameState(prev => {
-      // Reset wrong states
-      const resetWrongStates = (items: WordPair[]) => 
-        items.map(item => ({ ...item, isWrong: false }));
-
       const newState = { 
         ...prev, 
         selectedMeaning: meaning,

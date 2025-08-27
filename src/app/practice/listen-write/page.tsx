@@ -9,27 +9,7 @@ import { Button } from '@/components/atoms/Button';
 import Text from '@/components/atoms/Text';
 import Heading from '@/components/atoms/Heading';
 import IntroductionSection from '@/components/molecules/IntroductionSection';
-
-interface ListenWriteQuestion {
-  id: string;
-  word: string;
-  meaning: string;
-  pronunciation?: string;
-  definition?: string;
-  example?: string;
-}
-
-interface GameState {
-  questions: ListenWriteQuestion[];
-  currentQuestionIndex: number;
-  userAnswer: string;
-  score: number;
-  totalQuestions: number;
-  isAnswered: boolean;
-  isCorrect: boolean;
-  isGameComplete: boolean;
-  isListening: boolean;
-}
+import { ListenWriteGameState, ListenWriteQuestion } from '@/types/practice';
 
 export default function ListenWritePage() {
   const searchParams = useSearchParams();
@@ -37,7 +17,7 @@ export default function ListenWritePage() {
   const collectionId = searchParams.get('collectionId');
   const { open: isSessionExpired } = useSessionExpired();
   
-  const [gameState, setGameState] = useState<GameState>({
+  const [gameState, setGameState] = useState<ListenWriteGameState>({
     questions: [],
     currentQuestionIndex: 0,
     userAnswer: '',

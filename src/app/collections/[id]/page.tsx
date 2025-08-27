@@ -30,7 +30,6 @@ export default function CollectionDetailPage() {
           setCollection(null);
         } else {
           setCollection(collections[0]);
-          // Initialize volumes for all vocabularies using the hook
           const ids = collections[0].collectionVocabularies.map((item: any) => item.vocabulary.id);
           setVolumes(Object.fromEntries(ids.map(id => [id, 1])));
         }

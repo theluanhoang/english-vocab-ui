@@ -9,25 +9,8 @@ import { Button } from '@/components/atoms/Button';
 import Text from '@/components/atoms/Text';
 import Heading from '@/components/atoms/Heading';
 import IntroductionSection from '@/components/molecules/IntroductionSection';
-
-interface FillBlankQuestion {
-  id: string;
-  sentence: string;
-  correctWord: string;
-  options: string[];
-  explanation?: string;
-}
-
-interface GameState {
-  questions: FillBlankQuestion[];
-  currentQuestionIndex: number;
-  selectedAnswer: string | null;
-  score: number;
-  totalQuestions: number;
-  isAnswered: boolean;
-  isCorrect: boolean;
-  isGameComplete: boolean;
-}
+import { FillBlankGameState, FillBlankQuestion } from '@/types/practice';
+import { Vocabulary } from '@/types';
 
 export default function FillBlanksPage() {
   const searchParams = useSearchParams();
@@ -35,7 +18,7 @@ export default function FillBlanksPage() {
   const collectionId = searchParams.get('collectionId');
   const { open: isSessionExpired } = useSessionExpired();
   
-  const [gameState, setGameState] = useState<GameState>({
+  const [gameState, setGameState] = useState<FillBlankGameState>({
     questions: [],
     currentQuestionIndex: 0,
     selectedAnswer: null,
@@ -63,33 +46,24 @@ export default function FillBlanksPage() {
         
         setCollectionName(collection.name);
         
-        // Tạo câu hỏi từ collection vocabularies
-        const vocabularies = collection.collectionVocabularies
-          .map((cv: any) => cv.vocabulary)
-          .filter((vocab: any) => vocab.exampleSentence); // Lọc những từ có ví dụ
+        const vocabulariesToUse = collection.collectionVocabularies.map((cv: any) => cv.vocabulary);
 
-        // Nếu không có từ nào có ví dụ, tạo câu hỏi từ tất cả từ vựng
-        const vocabulariesToUse = vocabularies.length > 0 
-          ? vocabularies 
-          : collection.collectionVocabularies.map((cv: any) => cv.vocabulary);
-
-        const questions: FillBlankQuestion[] = vocabulariesToUse.map((vocab: any, index: number) => {
-          // Dùng câu ví dụ làm câu hỏi (nếu có)
+        const questions: FillBlankQuestion[] = vocabulariesToUse.map((vocab: Vocabulary, _: number) => {
+          
           const sentence = vocab.exampleSentence || `The word "${vocab.word}" means "${vocab.meaning}".`;
-          // Thay thế từ trong câu ví dụ bằng "_____" (không phân biệt hoa thường)
           const blankSentence = sentence.replace(new RegExp(vocab.word, 'gi'), '_____');
           
-          // Tạo các lựa chọn (bao gồm từ đúng và 3 từ khác ngẫu nhiên)
+          
           const otherWords = vocabulariesToUse
-            .filter((v: any) => v.word !== vocab.word) // Lọc ra các từ khác
-            .sort(() => 0.5 - Math.random()) // Xáo trộn để lấy ngẫu nhiên
+            .filter((v: Vocabulary) => v.word !== vocab.word)
+            .sort(() => 0.5 - Math.random())
             .slice(0, 3)
-            .map((v: any) => v.word);
+            .map((v: Vocabulary) => v.word);
           
           const options = [vocab.word, ...otherWords].sort(() => Math.random() - 0.5);
           
           return {
-            id: `question-${index}`,
+            id: `question-${vocab.id}`,
             sentence: blankSentence,
             correctWord: vocab.word,
             options,
@@ -99,7 +73,6 @@ export default function FillBlanksPage() {
           };
         });
 
-        // Shuffle questions
         const shuffledQuestions = questions.sort(() => Math.random() - 0.5);
 
         setGameState(prev => ({

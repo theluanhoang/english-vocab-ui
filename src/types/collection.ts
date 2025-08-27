@@ -39,7 +39,7 @@ interface CollectionVocabulary {
     vocabulary: Vocabulary;
 }
 
-interface GetCollectionResponse {
+export interface GetCollectionResponse {
     id: string;
     createdAt: string;
     updatedAt: string;

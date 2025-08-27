@@ -37,7 +37,7 @@ function DetailVocabularySection({ vocabulary }: DetailedVocabularySectionProps)
                     <div>
                         <Heading as='h4' className="text-sm font-medium text-content-secondary-light dark:text-content-secondary-dark mb-2">Example:</Heading>
                         <Text className="text-content-primary-light dark:text-content-primary-dark bg-background-icon-light dark:bg-background-icon-dark px-3 py-2 rounded-lg border border-border-light dark:border-border-dark italic">
-                            "{vocabulary.exampleSentence} ({vocabulary.translatedExample})"
+                            "{vocabulary.exampleSentence} {vocabulary.translatedExample ?? (vocabulary.translatedExample)}"
                         </Text>
                     </div>
                 </div>

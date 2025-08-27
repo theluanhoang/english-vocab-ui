@@ -106,7 +106,7 @@ module.exports = {
         'info-bg': 'var(--info-bg)',
         'info-border': 'var(--info-border)',
         'subtle-bg': 'var(--subtle-bg)',
-        'subtle-border': 'var(--subtle-border)',
+        'subtle-border': 'var(--subtle-border)'
       },
       boxShadow: {
         sm: '0 1px 2px rgba(24, 24, 27, 0.05)',

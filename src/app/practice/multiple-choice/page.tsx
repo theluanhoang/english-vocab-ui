@@ -9,27 +9,7 @@ import { Button } from '@/components/atoms/Button';
 import Text from '@/components/atoms/Text';
 import Heading from '@/components/atoms/Heading';
 import IntroductionSection from '@/components/molecules/IntroductionSection';
-
-interface MultipleChoiceQuestion {
-  id: string;
-  word: string;
-  correctMeaning: string;
-  options: string[];
-  pronunciation?: string;
-  definition?: string;
-  example?: string;
-}
-
-interface GameState {
-  questions: MultipleChoiceQuestion[];
-  currentQuestionIndex: number;
-  selectedAnswer: string | null;
-  score: number;
-  totalQuestions: number;
-  isAnswered: boolean;
-  isCorrect: boolean;
-  isGameComplete: boolean;
-}
+import { MultipleChoiceGameState, MultipleChoiceQuestion } from '@/types/practice';
 
 export default function MultipleChoicePage() {
   const searchParams = useSearchParams();
@@ -37,7 +17,7 @@ export default function MultipleChoicePage() {
   const collectionId = searchParams.get('collectionId');
   const { open: isSessionExpired } = useSessionExpired();
   
-  const [gameState, setGameState] = useState<GameState>({
+  const [gameState, setGameState] = useState<MultipleChoiceGameState>({
     questions: [],
     currentQuestionIndex: 0,
     selectedAnswer: null,
