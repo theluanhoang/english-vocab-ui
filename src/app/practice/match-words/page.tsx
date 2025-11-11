@@ -90,92 +90,62 @@ export default function MatchWordsPage() {
         items.map(item => ({ ...item, isWrong: false }));
   const handleWordClick = (word: WordPair) => {
     if (word.isMatched) return;
+    const newState: WordPairGameState = {
+      ...gameState,
+      selectedWord: gameState.selectedWord == word ? null : word
+    }
 
-    setGameState(prev => {     
-      return {
-        ...prev,
-        words: resetWrongStates(prev.words),
-        meanings: resetWrongStates(prev.meanings),
-        selectedWord: word,
-        selectedMeaning: prev.selectedMeaning
-      };
-    });
+    setGameState(newState);
+    
+
+    // words: WordPair[];
+    // meanings: WordPair[];
+    // selectedWord: WordPair | null;
+    // selectedMeaning: WordPair | null;
+    // matchedPairs: string[];
+    // score: number;
+    // totalPairs: number;
+    // isGameComplete: boolean;
+    // wrongAttempts: number;
   };
 
   const handleMeaningClick = (meaning: WordPair) => {
     if (meaning.isMatched) return;
 
-    setGameState(prev => {
-      const newState = { 
-        ...prev, 
-        selectedMeaning: meaning,
-        words: resetWrongStates(prev.words),
-        meanings: resetWrongStates(prev.meanings)
-      };
+    setGameState((prev) => {
 
-      // Kiểm tra nếu đã chọn cả từ và nghĩa
-      if (prev.selectedWord && meaning) {
-        if (prev.selectedWord.word === meaning.word) {
-          // Đúng - ghép thành công
-          const newMatchedPairs = [...prev.matchedPairs, prev.selectedWord.word];
-          const newWords = prev.words.map(w => 
-            w.word === prev.selectedWord!.word ? { ...w, isMatched: true, isSelected: false } : w
-          );
-          const newMeanings = prev.meanings.map(m => 
-            m.word === meaning.word ? { ...m, isMatched: true, isSelected: false } : m
-          );
+      let newState: WordPairGameState = {
+        ...prev,
+        selectedMeaning: gameState.selectedMeaning == meaning ? null : meaning
+      }
 
-          const newScore = prev.score + 1;
-          const isComplete = newMatchedPairs.length === prev.totalPairs;
+      if (!prev.selectedWord) return newState;
 
-          return {
-            ...newState,
-            words: newWords,
-            meanings: newMeanings,
-            matchedPairs: newMatchedPairs,
-            score: newScore,
-            isGameComplete: isComplete,
-            selectedWord: null,
-            selectedMeaning: null
-          };
-        } else {
-          // Sai - hiển thị feedback và tự động reset sau 1 giây
-          const wrongWordId = prev.selectedWord!.id;
-          const wrongMeaningId = meaning.id;
-          
-          const newWords = prev.words.map(w => ({
-            ...w,
-            isWrong: w.id === wrongWordId
-          }));
-          const newMeanings = prev.meanings.map(m => ({
-            ...m,
-            isWrong: m.id === wrongMeaningId
-          }));
+      const correctWord = prev.words.filter((word, _) => word.meaning === meaning.meaning)[0].word;
 
-          setTimeout(() => {
-            setGameState(current => ({
-              ...current,
-              words: current.words.map(w => w.id === wrongWordId ? { ...w, isWrong: false } : w),
-              meanings: current.meanings.map(m => m.id === wrongMeaningId ? { ...m, isWrong: false } : m),
-              selectedWord: null,
-              selectedMeaning: null,
-            }));
-          }, 1000);
+      const isCorrect = prev.selectedWord.word === correctWord;
 
-          return {
-            ...newState,
-            words: newWords,
-            meanings: newMeanings,
-            wrongAttempts: prev.wrongAttempts + 1,
-            selectedWord: null, // Bỏ chọn ngay lập tức
-            selectedMeaning: null
-          };
+      if (isCorrect) {
+        const matchedPairs = [...prev.matchedPairs, correctWord, meaning.meaning];
+        newState = {
+          ...gameState,
+          selectedMeaning: gameState.selectedMeaning == meaning ? null : meaning,
+          matchedPairs
         }
       }
+
+      console.log("correctWord:::", correctWord);
+      console.log("isCorrect:::", isCorrect);
+      console.log("NEW STATE:::", newState);
+      
 
       return newState;
     });
   };
+
+  const checkPair = (newState: WordPairGameState) => {
+    setGameState();
+  }
 
   const resetGame = () => {
     const shuffledMeanings = [...gameState.meanings].sort(() => Math.random() - 0.5);
